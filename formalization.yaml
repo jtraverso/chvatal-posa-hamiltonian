@@ -1,0 +1,144 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Chvátal's and Pósa's degree conditions for Hamiltonian cycles"
+  description: >-
+    A Lean 4 / Mathlib formalization of two classical degree-sequence conditions for
+    Hamiltonicity of a finite simple graph on n ≥ 3 vertices with degrees d₁ ≤ ⋯ ≤ dₙ. Chvátal's
+    theorem (1972): if for every i < n/2, dᵢ ≤ i implies d_{n−i} ≥ n − i, then the graph is
+    Hamiltonian (stated without sorting: if at least i vertices have degree at most i, then at
+    least i + 1 vertices have degree at least n − i). Pósa's theorem (1962): if for every k with
+    1 ≤ k < (n − 1)/2 fewer than k vertices have degree at most k, and, for odd n, at most
+    (n − 1)/2 vertices have degree at most (n − 1)/2, then the graph is Hamiltonian. Mathlib has
+    Hamiltonian cycles but neither theorem.
+  authors:
+    - "Juan Pablo Traverso Gianini"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Juan Pablo Traverso Gianini"
+
+classification:
+  arxiv: ["math.CO"]
+  msc2020: ["05C45", "05C07"]
+
+sources:
+  - title: "On Hamilton's ideals"
+    authors:
+      - "V. Chvátal"
+    id: "doi:10.1016/0095-8956(72)90020-2"
+    type: "paper"
+    location: "Journal of Combinatorial Theory, Series B 12 (1972), 163–168"
+    relationship: "formalizes"
+    note: "Chvátal's degree-sequence condition for Hamiltonicity."
+    license: "all rights reserved"
+    author_endorsement: "n/a"
+  - title: "A theorem concerning Hamilton lines"
+    authors:
+      - "L. Pósa"
+    type: "paper"
+    location: "Magyar Tudományos Akadémia Matematikai Kutató Intézetének Közleményei 7 (1962), 225–226"
+    relationship: "formalizes"
+    note: "Pósa's degree condition for Hamiltonicity (no DOI)."
+    license: "all rights reserved"
+    author_endorsement: "n/a"
+  - title: "A method in graph theory"
+    authors:
+      - "J. A. Bondy"
+      - "V. Chvátal"
+    id: "doi:10.1016/0012-365X(76)90078-9"
+    type: "paper"
+    location: "Discrete Mathematics 15 (1976), 111–135"
+    relationship: "background"
+    note: >-
+      The closure argument used in the proofs: adding an edge between non-adjacent vertices whose
+      degrees sum to at least n does not change Hamiltonicity.
+    license: "all rights reserved"
+    author_endorsement: "not-contacted"
+
+related_formalizations:
+  - id: "PALOMAR-2026-10-15-000020 (jtraverso/menger-hamiltonian)"
+    relationship: "builds-on"
+    note: >-
+      The same author's Menger / Hamiltonicity entry. Its library `MengerHamilton/` (commit
+      b6cf60e) is included unchanged and provides the Bondy–Chvátal closure lemma
+      (`isHamiltonian_sup_edge_iff`).
+
+status:
+  scope: "Proved for every finite simple graph on at least three vertices."
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "autonomous"
+      models: ["Aristotle (Harmonic)"]
+      framework: "Aristotle CLI"
+      tool_setup: >-
+        Produced all proofs in one run from the formal statements and a proof plan (the
+        Bondy–Chvátal closure argument on top of the existing `MengerHamilton` library); the
+        return was audited (statements and headers unchanged, no added axioms) and rebuilt
+        locally.
+      cost:
+        wall_time: "under one hour"
+        spend_usd: "not tracked"
+        hardware: "API-only"
+      prompting_notes: "Formal statements and proof plan supplied."
+    - method: "agent"
+      models: ["Claude Opus 5.5"]
+      framework: "Claude Code (Anthropic)"
+      tool_setup: >-
+        Statement design, proof plan, integration and review of the Aristotle return, and the
+        Palomar packaging, checked with `lake build` and `#print axioms` (Lean v4.35.0-rc3,
+        Mathlib c55e6e786f49471c72fbddbec5415808896aec1e).
+      cost:
+        wall_time: "about one hour"
+        spend_usd: "subscription-based"
+        hardware: "local machine"
+      prompting_notes: "Natural-language instructions in Spanish, directed by the author."
+  spend_usd: "subscription-based"
+  notes: >-
+    The results were chosen by the human author; the Lean proofs are AI-generated and
+    mechanically verified (no `sorry`, axioms limited to propext, Classical.choice and Quot.sound,
+    identical elaborated types for the Challenge/Solution pair).
+
+fidelity:
+  divergences: >-
+    The degree-sequence conditions are stated without sorting the degrees. For Chvátal, "dᵢ ≤ i"
+    is "at least i vertices have degree at most i" and "d_{n−i} ≥ n − i" is "at least i + 1
+    vertices have degree at least n − i", for all i with 1 ≤ i and 2i < n; these are equivalent to
+    the sorted conditions. For Pósa, "d_k > k for 1 ≤ k < (n − 1)/2" is "fewer than k vertices have
+    degree at most k", and, for odd n, "d_{(n+1)/2} > (n − 1)/2" is "at most (n − 1)/2
+    vertices have degree at most (n − 1)/2". Hamiltonicity is
+    Mathlib's `SimpleGraph.IsHamiltonian` (a Hamiltonian cycle exists unless the graph has
+    exactly one vertex); the hypothesis n ≥ 3 is explicit.
+
+review:
+  status: "agent-reviewed"
+  reviewers:
+    - "Claude Opus 5.5 (AI agent in Claude Code, acting for the author)"
+  notes: >-
+    Agent review by Claude Opus 5.5, distinct from the mechanical verification: the agent
+    compared the statements with Chvátal's and Pósa's theorems, checked the translation of the
+    sorted degree conditions into counting form, checked that the Aristotle return left every
+    statement and header unchanged, and confirmed by `lake build`, `#print axioms` and a
+    comparison of the fully elaborated Challenge and Solution types that the proofs use no
+    `sorry` and only propext, Classical.choice and Quot.sound. The author directed the work and
+    approved the statements. No independent human mathematical review has been performed. The
+    results are classical; no mathematical novelty is claimed.
+
+alignment:
+  namespace: "HamiltonDegree"
+  statements:
+    - source: "Chvátal (1972): the degree-sequence condition implies Hamiltonicity"
+      lean: "HamiltonDegree.chvatal"
+      module: "Challenge"
+      status: "proved"
+    - source: "Pósa (1962): the degree condition implies Hamiltonicity"
+      lean: "HamiltonDegree.posa"
+      module: "Challenge"
+      status: "proved"
+
+acknowledgements: >-
+  Mathlib and the Lean community; Harmonic's Aristotle.
